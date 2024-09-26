@@ -1,0 +1,230 @@
+version: '3.8'  # Ensure you're using a compatible version
+
+services:
+  # PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: gis
+    container_name: GIS
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+    working_dir: /var/www/GIS
+    volumes:
+      - ./GIS:/var/www/GIS           # Ensure this directory exists and is correct
+      - ./storage/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - GIS
+
+  # Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: nginxGIS
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "200:80"
+    volumes:
+      - ./GIS:/var/www/GIS           # Ensure this directory exists and is correct
+      - ./storage/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - GIS
+
+  # MySQL Service
+  db:
+    image: mysql:5.7
+    container_name: dbGIS
+    restart: always
+    tty: true
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: gis
+      MYSQL_USER: rootnow
+      MYSQL_PASSWORD: rootnow
+      MYSQL_ROOT_PASSWORD: root
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - lbdata:/var/lib/mysql
+    networks:
+      - GIS
+
+  # phpMyAdmin Service
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: GISdocker
+    restart: always
+    ports:
+      - "7000:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: rootnow
+      PMA_PASSWORD: rootnow
+    networks:
+      - GIS
+
+# Docker Networks
+networks:
+  GIS:
+    driver: bridge
+
+# Volumes
+volumes:
+  lbdata:
+    driver: local
+
+###################################
+# version: '3.8'
+# services:
+#   #PHP Service
+#   app:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     image: giswae
+#     container_name: GIS
+#     restart: unless-stopped
+#     tty: true
+#     environment:
+#       SERVICE_NAME: app
+#     working_dir: /var/www/GIS
+#     volumes:
+#       - .:/var/www/GIS
+#       #- ./src:/var/www/GIS
+#       - ./storage/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+#     networks:
+#       - GIS
+#   #Nginx Service
+#   webserver:
+#     image: nginx:alpine
+#     container_name: nginxGIS
+#     restart: unless-stopped
+#     tty: true
+#     ports:
+#       - "200:80"
+#     volumes:
+#       - .:/var/www/GIS
+#       #- ./src:/var/www
+#       - ./storage:/etc/nginx/conf.d/
+#     networks:
+#       - laravel
+
+#   #MySQL Service
+#   db:
+#     image: mysql:5.7
+#     container_name: dbGIS
+#     restart: always
+#     tty: true
+#     ports:
+#       - "20222:3306"
+#     environment:
+#       MYSQL_PASSWORD: rootnow
+#       MYSQL_ROOT_PASSWORD: rootnow
+#       SERVICE_TAGS: dev
+#       SERVICE_NAME: mysql
+#     volumes:
+#       #- ./mysql:/var/lib/mysql
+#       - lbdata:/var/lib/mysql
+#     networks:
+#       - GIS
+      
+# phpmyadmin:
+#   image: phpmyadmin/phpmyadmin
+#   container_name: GISdocker
+#   links:
+#     -db
+#   restart: always
+#   ports:
+#     - 7000:80
+
+#   #Docker Networks
+# networks:
+#   GIS:
+#     driver: bridge
+#   #Volumes
+# volumes:
+#   lbdata:
+#     driver: local
+###############################################
+# version: '3'
+
+# services:
+#   # PHP Service
+#   app:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     image: gis
+#     container_name: GIS
+#     restart: unless-stopped
+#     tty: true
+#     environment:
+#       SERVICE_NAME: app
+#     working_dir: /var/www/GIS
+#     volumes:
+#       - .:/var/www/GIS
+#       - ./storage/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+#     networks:
+#       - GIS
+
+#   # Nginx Service
+#   webserver:
+#     image: nginx:alpine
+#     container_name: nginxGIS
+#     restart: unless-stopped
+#     tty: true
+#     ports:
+#       - "200:80"
+#     volumes:
+#       - .GIS:/var/www/GIS
+#       - ./storage/nginx.conf:/etc/nginx/conf.d/default.conf
+#     networks:
+#       - GIS
+
+#   # MySQL Service
+#   db:
+#     image: mysql:5.7
+#     container_name: dbGIS
+#     restart: always
+#     tty: true
+#     ports:
+#       - "20222:3306"
+#     environment:
+#       MYSQL_DATABASE: gis # Set database name if needed
+#       MYSQL_USER: rootnow           # Set user name if needed
+#       MYSQL_PASSWORD: rootnow
+#       MYSQL_ROOT_PASSWORD: root
+#       SERVICE_TAGS: dev
+#       SERVICE_NAME: mysql
+#     volumes:
+#       - lbdata:/var/lib/mysql
+#     networks:
+#       - GIS
+
+#   # phpMyAdmin Service
+#   phpmyadmin:
+#     image: phpmyadmin/phpmyadmin
+#     container_name: GISdocker
+#     restart: always
+#     ports:
+#       - "7000:80"
+#     environment:
+#       PMA_HOST: db
+#       PMA_USER: rootnow         # Set user name if needed
+#       PMA_PASSWORD: rootnow             # Set password if needed
+#     networks:
+#       - GIS
+
+# # Docker Networks
+# networks:
+#   GIS:
+#     driver: bridge
+
+# # Volumes
+# volumes:
+#   lbdata:
+#     driver: local
