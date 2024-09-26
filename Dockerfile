@@ -1,53 +1,100 @@
-# Menggunakan image resmi PHP dengan PHP-FPM 8.0
+# # Menggunakan image resmi PHP dengan PHP-FPM 8.0
+# FROM php:8.1-fpm
+
+# # Menetapkan direktori kerja di dalam container
+# WORKDIR /var/www
+
+# # Menyalin file composer untuk mengunduh dependensi proyek Laravel
+# COPY composer.json composer.lock ./
+
+# # Install dependensi yang diperlukan untuk Laravel dan PHP extensions
+# RUN apt-get update && apt-get install -y \
+#     build-essential \
+#     libmcrypt-dev \
+#     mariadb-client \
+#     libpng-dev \
+#     libjpeg62-turbo-dev \
+#     libfreetype6-dev \
+#     locales \
+#     jpegoptim \
+#     optipng \
+#     pngquant \
+#     gifsicle \
+#     vim \
+#     unzip \
+#     git \
+#     curl \
+#     libzip-dev \
+#     zip \
+#     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# # Menginstal ekstensi PHP yang diperlukan
+# RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+#     && docker-php-ext-install gd \
+#     && docker-php-ext-install pdo pdo_mysql zip
+
+# # Menginstal Composer
+# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# # Menyalin semua file aplikasi ke dalam container
+# COPY . .
+
+# # Install dependensi Laravel
+# RUN composer install --optimize-autoloader --no-dev
+
+# # Mengatur hak akses untuk file yang disalin
+# RUN chown -R www-data:www-data /var/www/GIS \
+#     && chmod -R 755 /var/www/GIS
+
+# # Membuka port 9000 untuk PHP-FPM
+# EXPOSE 9000
+
+# # Menjalankan PHP-FPM saat container dimulai
+# CMD ["php-fpm"]
+
+# Use the official PHP image as a base image
 FROM php:8.1-fpm
 
-# Menetapkan direktori kerja di dalam container
-WORKDIR /var/www/GIS
+# Set working directory
+WORKDIR /var/www
 
-# Menyalin file composer untuk mengunduh dependensi proyek Laravel
-COPY composer.json composer.lock ./
-
-# Install dependensi yang diperlukan untuk Laravel dan PHP extensions
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
-    libmcrypt-dev \
-    mariadb-client \
     libpng-dev \
-    libjpeg62-turbo-dev \
+    libjpeg-dev \
     libfreetype6-dev \
     locales \
-    jpegoptim \
-    optipng \
-    pngquant \
-    gifsicle \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
     vim \
     unzip \
     git \
     curl \
     libzip-dev \
-    zip \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    libpq-dev \
+    libonig-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
 
-# Menginstal ekstensi PHP yang diperlukan
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd \
-    && docker-php-ext-install pdo pdo_mysql zip
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring zip exif pcntl
 
-# Menginstal Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Menyalin semua file aplikasi ke dalam container
-COPY . .
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install dependensi Laravel
-RUN composer install --optimize-autoloader --no-dev
+# Copy the existing application directory contents to the working directory
+COPY . /var/www
 
-# Mengatur hak akses untuk file yang disalin
-RUN chown -R www-data:www-data /var/www/GIS \
-    && chmod -R 755 /var/www/GIS
+# Copy the existing application directory permissions to the working directory
+COPY --chown=www-data:www-data . /var/www
 
-# Membuka port 9000 untuk PHP-FPM
+# Change current user to www
+USER www-data
+
+# Expose port 9000 and start php-fpm server
 EXPOSE 9000
-
-# Menjalankan PHP-FPM saat container dimulai
 CMD ["php-fpm"]
