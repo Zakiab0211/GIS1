@@ -23,4 +23,5 @@ Route::resource('webGI11S', WebGIS11Controller::class);
 /*comment bila perlu*/
 // Route::resource('webGIS', WebGISController::class)->only(['index', 'show']);
 Route::get('/titik/json',[TitikController::class,'titik']);
+Route::get('/titik/lokasi',[TitikController::class,'lokasi']);
 Route::get('/kondisi/json',[KondisController::class,'kondisi']);

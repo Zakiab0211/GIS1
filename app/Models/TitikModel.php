@@ -14,4 +14,12 @@ class TitikModel extends Model
         ->get();
         return $result;
     }
+
+    public function getLokasi(){
+        $result = DB::table('tbl_lokasi')
+        ->select('id','nama', 'alamat', 'gambar')
+        // ->where('id',$id);
+        ->get();
+        return $result;
+    }
 }

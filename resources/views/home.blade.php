@@ -36,11 +36,7 @@
 			margin-top: 0;
 			color: #007BFF;
 		}
-        /* .Label-bidang {
-            font-size:10pt;
-            color:#04e2d4;
-            text-align: center;
-        } */
+
      </style>
 
 </head>
@@ -134,7 +130,7 @@ $( document ).ready(function() {
     $.each(data, function(index) {
         // alert(data[index])
 
-        var marker = L.marker([parseFloat(data[index].latitude),parseFloat(data[index].longtitude)]).addTo(map);
+        var marker = L.marker([parseFloat(data[index].latitude),parseFloat(data[index].longtitude)], {icon: user1}).addTo(map);
         /*ini kalo ambil satu parameter yang di tampilkan*/
         //marker.bindPopup('<b>Rekomendasi</b><p></p>' + data[index].Rekomendasi);
         // Gabungkan semua konten yang ingin ditampilkan di popup
@@ -160,6 +156,36 @@ $.getJSON('assets/geojson/map.geojson', function(data){
 
 });
 
+// $.getJSON('titik/lokasi'+feature.properties.id, function(detail){
+//     $.each(detail, function(index){
+//         var html='<div><h5> Nama : '+detail[index].nama+'</h5>';
+//             html+='<h6>Alamat : '+detail[index].alamat+'</h6>';
+//             html+='<img height="100px" src="assets/images/'+detail[index].gambar+'"></div>';
+//         L.popup()
+//             .setLatLng(layer.getBounds().getCenter())
+//             .setContent(custom-popup)
+//             .openOn(map);
+            
+//         });
+
+// })
+
+// Menambahkan marker di titik [-7.313974, 112.737495] dan menampilkan informasi dari database
+// $.getJSON('titik/lokasi/'+feature.properties.id, function(detail) {
+//     $.each(detail, function(index) {
+//         // Buat konten HTML untuk ditampilkan di dalam popup
+//         var html = '<div><h5> Nama: ' + detail[index].nama + '</h5>';
+//         html += '<h6>Alamat: ' + detail[index].alamat + '</h6>';
+//         html += '<img height="100px" src="assets/images/' + detail[index].gambar + '"></div>';
+
+//         // Buat marker di lokasi [-7.313974, 112.737495]
+//         var marker = L.marker([-7.313974, 112.737495]).addTo(map);
+
+//         // Tampilkan popup di marker tersebut
+//         marker.bindPopup(custom-popup).openPopup();
+//     });
+// });
+
 //////////////
 $.getJSON('assets/geojson/map.geojson', function(json){
     geoLayer = L.geoJson(json,{
@@ -182,9 +208,8 @@ $.getJSON('assets/geojson/map.geojson', function(json){
 
         // });
 // Menambahkan marker di tengah setiap layer
-var marker = L.marker(layer.getBounds().getCenter()).addTo(map);
+var marker = L.marker(layer.getBounds().getCenter(), {icon: flag1}).addTo(map);
 //var marker = L.marker([-7.2727028137165775, 112.8025511510512], {icon: flag1}).addTo(map);
-//var marker = L.marker([-7.27921532787515, 112.79971597990368], {icon: flag1}).addTo(map);
 
 // Mengambil ID dan keterangan dari `data[index]`
 //var  = feature.properties.suhu;  // Atur sesuai dengan struktur JSON
@@ -199,6 +224,7 @@ var popupContent1 =
     // Bind popup dengan konten gabungan
     marker.bindPopup(popupContent1);
 
+
     // Menambahkan layer ke map
     layer.addTo(map);
     }
@@ -206,22 +232,20 @@ var popupContent1 =
     });
 
 });
-///////////////////
 
 
 /*fungsi untuk mengcustom marker pada titik peta */
 L.icon = function (options) {
     return new L.Icon(options);
 };
-var grenarea1 = new LeafIcon({iconUrl: '/GIS/assets/icons/grenarea.png'}),
-    location1 = new LeafIcon({iconUrl: '/GIS/assets/icons/location.png'}),
-    as = new LeafIcon({iconUrl: '/GIS/assets/icons/jay.png'}),
-    user1 = new LeafIcon({iconUrl: '/GIS/assets/icons/user.png'});
-    flag1 = new LeafIcon({iconUrl: '/GIS/assets/icons/flag.png'})
+var grenarea1 = new LeafIcon({iconUrl: 'GIS/app/assets/icons/grenarea.png'}),
+    location1 = new LeafIcon({iconUrl: 'GIS/app/assets/icons/location.png'}),
+    as = new LeafIcon({iconUrl: 'GIS/app/assets/icons/jay.png'}),
+    user1 = new LeafIcon({iconUrl: 'GIS/app/assets/icons/user.png'});
     
-    L.marker([-7.275755, 112.7973779]).addTo(map).bindPopup('<div class="custom-popup"><h3>Smart Weather</h3><p>Suhu: 28°C<br>Kelembapan: 70%<br>Cuaca: Cerah</p></div>');
-    L.marker([-7.275431, 112.796391]).addTo(map).bindPopup('<div class="custom-popup"><h3>Smart Soil</h3><p>Kondisi Tanah: Optimal<br>pH Tanah: 6.5</p></div>');
-    L.marker([-7.275815, 112.799137]).addTo(map).bindPopup('<div class="custom-popup"><h3>Smart OPT</h3><p>Deteksi dini hama dan penyakit tanaman.</p></div>');
+    L.marker([-7.275755, 112.7973779], {icon: grenarea1}).addTo(map).bindPopup('<div class="custom-popup"><h3>Smart Weather</h3><p>Suhu: 28°C<br>Kelembapan: 70%<br>Cuaca: Cerah</p></div>');
+    L.marker([-7.275431, 112.796391], {icon: location1}).addTo(map).bindPopup('<div class="custom-popup"><h3>Smart Soil</h3><p>Kondisi Tanah: Optimal<br>pH Tanah: 6.5</p></div>');
+    L.marker([-7.275815, 112.799137], {icon: as}).addTo(map).bindPopup('<div class="custom-popup"><h3>Smart OPT</h3><p>Deteksi dini hama dan penyakit tanaman.</p></div>');
 
 </script>
 

@@ -23,5 +23,11 @@ class TitikController extends Controller
         $results = $this->TitikModel->allData();  // Mengakses model
         return json_encode($results);
     }
+
+    public function lokasi()
+    {
+        $results = $this->TitikModel->getLokasi();  // Mengakses model
+        return json_encode($results);
+    }
 }
 
