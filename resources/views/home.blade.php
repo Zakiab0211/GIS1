@@ -47,29 +47,6 @@
 <script>
 var map = L.map('map').setView([-7.279090, 112.792796], 7);
 
-// /**pakai google streets */
-// googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
-//     maxZoom: 20,
-//     subdomains:['mt0','mt1','mt2','mt3']
-// }).addTo(map);
-
-// /**pakai open streetmap */
-// L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-//     maxZoom: 19,
-//     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-// }).addTo(map);
-
-// /**pakai open googleHybrid */
-// googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
-//     maxZoom: 20,
-//     subdomains:['mt0','mt1','mt2','mt3']
-// }).addTo(map);
-
-// Hybrid: s,h;
-// Satellite: s;
-// Streets: m;
-// Terrain: p;
-/////////////////////////////////////////////////////
 /*Layer untuk Google Hybrid*/
 var googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
         maxZoom: 20,
@@ -97,12 +74,6 @@ var googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z=
     L.control.layers(baseMaps).addTo(map);
     // Set Google Streets sebagai default layer yang ditampilkan saat halaman dimuat
     googleHybrid.addTo(map);
-////////////////////////////////////////
-
-    // L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
-    //     maxZoom: 20,
-    //     subdomains:['mt0','mt1','mt2','mt3']
-    // }).addTo(map);
 
     var LeafIcon = L.Icon.extend({
     options: {
@@ -116,13 +87,103 @@ var googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z=
 
 
 
+$( document ).ready(function() {
+    $.getJSON('titik/json', function (data) {
 
-/**fungsi untuk klik langtitude and longtitude */
-// function onMapClick(e) {
-//     alert("anda mengklik " + e.latlng);
-// }
+    $.each(data, function(index) {
+        // alert(data[index])
 
-// map.on('click', onMapClick);
+        var marker = L.marker([parseFloat(data[index].latitude),parseFloat(data[index].longtitude)]).addTo(map);
+        /*ini kalo ambil satu parameter yang di tampilkan*/
+        //marker.bindPopup('<b>Rekomendasi</b><p></p>' + data[index].Rekomendasi);
+        // Gabungkan semua konten yang ingin ditampilkan di popup
+        var popupContent = 
+                '<div class="custom-popup">' +
+                '<h3><b>Smart Agri</b></h3>' +
+                '<p><b>Tempat: </b></p>' + data[index].nama + '' + 
+                '<p><b>Rekomendasi: </b></p>' + data[index].Rekomendasi + '' +  // Tampilkan rekomendasi
+                '<p><b>Keterangan: </b></p>' + data[index].keterangan + '' +  // Tampilkan keterangan
+                '</div>';
+
+            // Bind popup dengan konten gabungan
+            marker.bindPopup(popupContent);
+
+    });
+
+    });
+
+});
+
+$( document ).ready(function() {
+    $.getJSON('kondisi/lokasi', function (data) {
+
+    $.each(data, function(index) {
+        // alert(data[index])
+
+        var marker = L.marker([parseFloat(data[index].latitude),parseFloat(data[index].longtitude)]).addTo(map);
+        /*ini kalo ambil satu parameter yang di tampilkan*/
+        //marker.bindPopup('<b>Rekomendasi</b><p></p>' + data[index].Rekomendasi);
+        // Gabungkan semua konten yang ingin ditampilkan di popup
+        var popupContent = 
+                '<div class="custom-popup">' +
+                '<h3><b>Smart Irigat</b></h3>' +
+                '<p><b>Nama: </b></p>' + data[index].nama + '' + 
+                '<p><b>Wilayah: </b></p>' + data[index].alamat + '' +  // Tampilkan rekomendasi
+                //'<p><b>Gambar: </b></p>' + data[index].gambar + '' +  // Tampilkan keterangan
+                //'<img src="' + data[index].gambar + '" alt="Gambar" style="width:100%; height:auto;">' +  // Tampilkan gambar
+                '<img src="gambara.JPG" alt="Gambar" style="width:100%; height:auto;">' +  // Tampilkan gambar
+                '</div>';
+
+            // Bind popup dengan konten gabungan
+            marker.bindPopup(popupContent);
+
+    });
+
+    });
+
+});
+
+$.getJSON('assets/geojson/map.geojson', function(data){
+
+});
+
+$.getJSON('assets/geojson/map.geojson', function(json){
+    geoLayer = L.geoJson(json,{
+        style: function(feature){
+        return{
+            fillOpacity: 0.5,
+            weight: 5,
+            opacity: 1,
+            color:"blue",
+            dashArray: "30 10",
+            lineCap: 'square'
+        };
+    },
+    onEachFeature: function(feature, layer){
+
+// Menambahkan marker di tengah setiap layer
+var marker = L.marker(layer.getBounds().getCenter()).addTo(map);
+//var marker = L.marker([-7.2727028137165775, 112.8025511510512], {icon: flag1}).addTo(map);
+
+
+// Mengambil ID atau properti lainnya dari GeoJSON
+var popupContent1 = 
+    '<div class="custom-popup">' +
+    '<h3><b>Lokasi</b></h3>' +
+    '<p><b>suhu: </b>' + feature.properties.suhu + '</p>' +  // Tampilkan ID dari properti GeoJSON
+    '<p><b>kelembapan: </b>' + feature.properties.kelembapan +'</p>' + // Tampilkan keterangan tambahan
+    '</div>';
+    // Bind popup dengan konten gabungan
+    marker.bindPopup(popupContent1);
+
+
+    // Menambahkan layer ke map
+    layer.addTo(map);
+    }
+    
+    });
+
+});
 
 $( document ).ready(function() {
     $.getJSON('titik/json', function (data) {
@@ -152,88 +213,6 @@ $( document ).ready(function() {
 });
 
 
-$.getJSON('assets/geojson/map.geojson', function(data){
-
-});
-
-// $.getJSON('titik/lokasi'+feature.properties.id, function(detail){
-//     $.each(detail, function(index){
-//         var html='<div><h5> Nama : '+detail[index].nama+'</h5>';
-//             html+='<h6>Alamat : '+detail[index].alamat+'</h6>';
-//             html+='<img height="100px" src="assets/images/'+detail[index].gambar+'"></div>';
-//         L.popup()
-//             .setLatLng(layer.getBounds().getCenter())
-//             .setContent(custom-popup)
-//             .openOn(map);
-            
-//         });
-
-// })
-
-// Menambahkan marker di titik [-7.313974, 112.737495] dan menampilkan informasi dari database
-// $.getJSON('titik/lokasi/'+feature.properties.id, function(detail) {
-//     $.each(detail, function(index) {
-//         // Buat konten HTML untuk ditampilkan di dalam popup
-//         var html = '<div><h5> Nama: ' + detail[index].nama + '</h5>';
-//         html += '<h6>Alamat: ' + detail[index].alamat + '</h6>';
-//         html += '<img height="100px" src="assets/images/' + detail[index].gambar + '"></div>';
-
-//         // Buat marker di lokasi [-7.313974, 112.737495]
-//         var marker = L.marker([-7.313974, 112.737495]).addTo(map);
-
-//         // Tampilkan popup di marker tersebut
-//         marker.bindPopup(custom-popup).openPopup();
-//     });
-// });
-
-//////////////
-$.getJSON('assets/geojson/map.geojson', function(json){
-    geoLayer = L.geoJson(json,{
-        style: function(feature){
-        return{
-            fillOpacity: 0.5,
-            weight: 5,
-            opacity: 1,
-            color:"blue",
-            dashArray: "30 10",
-            lineCap: 'square'
-        };
-    },
-    onEachFeature: function(feature, layer){
-        // alert(feature.properties.nama)
-        // var cIcon = L.divicon({
-        //             className: 'label-bidang',
-        //             html: '<b>'+feature.properties.nama'</br>',
-        //             iconSize: [100, 20]
-
-        // });
-// Menambahkan marker di tengah setiap layer
-var marker = L.marker(layer.getBounds().getCenter()).addTo(map);
-//var marker = L.marker([-7.2727028137165775, 112.8025511510512], {icon: flag1}).addTo(map);
-
-// Mengambil ID dan keterangan dari `data[index]`
-//var  = feature.properties.suhu;  // Atur sesuai dengan struktur JSON
-
-// Mengambil ID atau properti lainnya dari GeoJSON
-var popupContent1 = 
-    '<div class="custom-popup">' +
-    '<h3><b>Lokasi</b></h3>' +
-    '<p><b>suhu: </b>' + feature.properties.suhu + '</p>' +  // Tampilkan ID dari properti GeoJSON
-    '<p><b>kelembapan: </b>' + feature.properties.kelembapan +'</p>' + // Tampilkan keterangan tambahan
-    '</div>';
-    // Bind popup dengan konten gabungan
-    marker.bindPopup(popupContent1);
-
-
-    // Menambahkan layer ke map
-    layer.addTo(map);
-    }
-    
-    });
-
-});
-
-
 /*fungsi untuk mengcustom marker pada titik peta */
 L.icon = function (options) {
     return new L.Icon(options);
@@ -250,4 +229,3 @@ var grenarea1 = new LeafIcon({iconUrl: 'GIS/app/assets/icons/grenarea.png'}),
 </script>
 
 </html>
-

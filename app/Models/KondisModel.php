@@ -8,9 +8,16 @@ use Illuminate\Support\Facades\DB;
 
 class KondisModel extends Model
 {
-    public function allData(){
+    public function getKondisi(){
         $result = DB::table('tbl_kondisi')
-        ->select('id', 'nama_lahan', 'suhu', 'kelembapan', 'rekomendasi')
+        ->select('id', 'nama_lahan', 'suhu', 'kelembapan', 'rekomendasi' )
+        ->get();
+        return $result;
+    }
+    public function getLokasi(){
+        $result = DB::table('tbl_lokasi')//$id=''
+        ->select('nama', 'latitude', 'longtitude', 'alamat', 'gambar')
+        //->where('id',$id)
         ->get();
         return $result;
     }

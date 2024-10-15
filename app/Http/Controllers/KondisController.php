@@ -18,7 +18,15 @@ class KondisController extends Controller{
 
     public function kondisi()
     {
-        $results = $this->KondisModel->allData();  // Mengakses model
+        $results = $this->KondisModel->getKondisi();  // Mengakses model
         return json_encode($results);
     }
+
+    public function lokasi()
+    {
+        $results = $this->KondisModel->getLokasi();  // Mengakses model ,$id='' , $id
+        return json_encode($results);
+    }
+
+
 }
