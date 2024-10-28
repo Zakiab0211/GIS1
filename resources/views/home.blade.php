@@ -222,7 +222,7 @@ var grenarea1 = new LeafIcon({iconUrl: 'img src="assets/icons/grenarea.png" alt=
     as = new LeafIcon({iconUrl: 'GIS/app/assets/icons/jay.png'}),
     user1 = new LeafIcon({iconUrl: 'GIS/app/assets/icons/user.png'});
     
-    L.marker([-7.275755, 112.7973779], {icon: grenarea1}).addTo(map).bindPopup('<div class="custom-popup"><h3>Smart Weather</h3><p>Suhu: 28°C<br>Kelembapan: 70%<br>Cuaca: Cerah</p></div>');
+    L.marker([-7.275755, 112.7973779]).addTo(map).bindPopup('<div class="custom-popup"><h3>Smart Weather</h3><p>Suhu: 28°C<br>Kelembapan: 70%<br>Cuaca: Cerah</p></div>');
     L.marker([-7.275431, 112.796391]).addTo(map).bindPopup('<div class="custom-popup"><h3>Smart Soil</h3><p>Kondisi Tanah: Optimal<br>pH Tanah: 6.5</p></div>');
     L.marker([-7.275815, 112.799137]).addTo(map).bindPopup('<div class="custom-popup"><h3>Smart OPT</h3><p>Deteksi dini hama dan penyakit tanaman.</p></div>');
 
