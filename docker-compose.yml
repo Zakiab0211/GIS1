@@ -27,7 +27,7 @@ services:
     restart: unless-stopped
     tty: true
     ports:
-      - "8080:80"  # Pastikan port ini tidak bentrok
+      - "80:80"  # Pastikan port ini tidak bentrok
     volumes:
       - .:/var/www  # Pastikan path ini ada di host
       - ./docker-compose/nginx:/etc/nginx/conf.d/  # Pastikan path ini ada
